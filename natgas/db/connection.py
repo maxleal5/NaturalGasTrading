@@ -55,14 +55,21 @@ def get_session() -> Session:
 
 
 def apply_schema(schema_path: str = None) -> None:
-    """Apply SQL schema file to the database."""
+    """Apply SQL schema file to the database.
+
+    Executes each semicolon-delimited statement individually so that
+    TimescaleDB helper calls (create_hypertable, add_retention_policy)
+    and DDL statements run in separate round-trips as required.
+    """
     if schema_path is None:
         schema_path = os.path.join(os.path.dirname(__file__), "../../db/schema.sql")
     schema_path = os.path.abspath(schema_path)
     with open(schema_path) as f:
         sql = f.read()
+    statements = [s.strip() for s in sql.split(";") if s.strip()]
     with engine().connect() as conn:
-        conn.execute(text(sql))
+        for stmt in statements:
+            conn.execute(text(stmt))
         conn.commit()
 
 

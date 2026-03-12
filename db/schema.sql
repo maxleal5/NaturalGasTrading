@@ -255,8 +255,14 @@ LEFT JOIN (
 ) ac ON ac.report_date = e.report_date
 LEFT JOIN hdd_cdd_bias_corrected_by_model hbc
     ON hbc.valid_date = e.report_date AND hbc.region = e.region
-LEFT JOIN supply_demand_weekly sd
-    ON sd.week_ending_date = e.report_date
+LEFT JOIN (
+    SELECT DISTINCT ON (week_ending_date)
+        week_ending_date, lng_exports_bcfd, dry_gas_production_bcfd,
+        pipeline_exports_mexico_bcfd, residential_commercial_demand_bcfd,
+        industrial_demand_bcfd
+    FROM supply_demand_weekly
+    ORDER BY week_ending_date, published_at DESC
+) sd ON sd.week_ending_date = e.report_date
 LEFT JOIN ngas_futures_daily f
     ON f.trade_date = e.report_date
 LEFT JOIN signal_log sl

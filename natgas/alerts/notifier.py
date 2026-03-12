@@ -1,7 +1,7 @@
 """Alerting module — Slack and email notifications."""
 import os
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from slack_sdk import WebhookClient
 from slack_sdk.errors import SlackApiError
 
@@ -31,7 +31,7 @@ def send_slack_alert(message: str, webhook_url: str = None) -> bool:
 
 def format_dag_failure_alert(task_name: str, failure_reason: str, last_success: datetime = None) -> str:
     """Format a standard DAG failure alert message."""
-    ts = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     last_ok = last_success.strftime("%Y-%m-%d %H:%M UTC") if last_success else "Unknown"
     return (
         f":red_circle: *NatGas Platform Alert* — `{task_name}` FAILED\n"
@@ -44,7 +44,7 @@ def format_dag_failure_alert(task_name: str, failure_reason: str, last_success: 
 def format_model_drift_alert(model_name: str, region: str, lead_days: int,
                               residual_bias: float, z_score: float, consecutive: int) -> str:
     """Format a model drift / stability alert message."""
-    ts = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     return (
         f":warning: *Model Change Detected* — `{model_name}`\n"
         f"*Time:* {ts}\n"
