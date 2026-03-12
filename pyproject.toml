@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "natgas-intelligence"
+version = "0.1.0"
+description = "NatGas Intelligence Platform - Weather & Storage Data Aggregation Engine"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--cov=natgas --cov-report=term-missing -v"
+
+[tool.coverage.run]
+source = ["natgas"]
+omit = ["tests/*", "dags/*", "dashboard/*"]
