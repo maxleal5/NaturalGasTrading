@@ -99,7 +99,8 @@ def fetch_gfs_forecast(
             try:
                 import cfgrib
                 import xarray as xr
-                import tempfile, os as _os
+                import tempfile
+                import os as _os
                 
                 with tempfile.NamedTemporaryFile(suffix=".grib2", delete=False) as tmp:
                     for chunk in resp.iter_content(chunk_size=8192):
